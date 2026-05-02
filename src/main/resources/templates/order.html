@@ -3,95 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steam Community - Pedidos</title>
-    <style>
-        :root {
-            --steam-dark: #1b2838; --steam-blue: #2a475e; --steam-light-blue: #66c0f4;
-            --steam-bg: #171a21; --text-color: #c7d5e0; --steam-input: #121a24;
-            --steam-border: #233c51; --steam-success: #5c7e10; --steam-logout: #a34c32;
-        }
-        body { background-color: var(--steam-bg); color: var(--text-color); font-family: "Motiva Sans", sans-serif; margin: 0; display: flex; height: 100vh; }
-        nav { width: 240px; background-color: var(--steam-dark); padding: 20px; border-right: 1px solid #233c51; display: flex; flex-direction: column; justify-content: space-between; }
-        nav h2 { font-size: 1.2rem; color: white; text-transform: uppercase; margin-bottom: 20px; }
-        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-        .nav-links li { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .nav-links a { color: var(--text-color); text-decoration: none; transition: color 0.3s; display: block; }
-        .nav-links a:hover { color: var(--steam-light-blue); }
-        .search-box { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--steam-border); }
-        .search-box label { font-size: 0.7rem; color: var(--steam-light-blue); display: block; margin-bottom: 5px; }
-        .search-box input { width: 100%; background: var(--steam-input); border: 1px solid var(--steam-border); color: white; padding: 5px; box-sizing: border-box; }
-        .btn-search { width: 100%; background: var(--steam-blue); color: white; border: none; padding: 5px; cursor: pointer; margin-top: 5px; }
-        .nav-footer { margin-top: auto; padding-top: 20px; }
-        .btn-logout { display: block; background-color: var(--steam-logout); color: white; text-align: center; padding: 10px; text-decoration: none; font-weight: bold; border-radius: 2px; }
-        main { flex-grow: 1; padding: 40px; overflow-y: auto; background: linear-gradient(to bottom, var(--steam-blue) 0%, var(--steam-bg) 40%); }
-        .form-container { background-color: rgba(0, 0, 0, 0.4); padding: 20px; border-radius: 4px; border: 1px solid var(--steam-border); margin-bottom: 40px; }
-        .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .form-group { display: flex; flex-direction: column; }
-        .form-group label { font-size: 0.7rem; color: var(--steam-light-blue); margin-bottom: 5px; text-transform: uppercase; }
-        .form-group input, .form-group select { background-color: var(--steam-input); border: 1px solid var(--steam-border); color: white; padding: 8px; outline: none; }
-        .btn-save { background-color: var(--steam-success); color: white; border: none; padding: 10px 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        .grid-juegos { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .card { background-color: rgba(0, 0, 0, 0.3); border-radius: 4px; border-left: 4px solid #BEEE11; transition: transform 0.2s; }
-        .card-info { padding: 15px; background: #1b2838; }
-        .price-tag { background-color: #000; color: #BEEE11; padding: 2px 8px; font-weight: bold; float: right; border-radius: 2px; font-size: 0.9rem;}
-        .actions-links { margin-top: 10px; display: flex; gap: 15px; border-top: 1px solid #233c51; padding-top: 8px; }
-        .actions-links a { text-decoration: none; font-size: 0.75rem; font-weight: bold; }
-    </style>
+    <title>Admin Tienda - Pedidos</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-
-<nav>
-    <div>
-        <h2>Tienda Andres</h2>
+<div class="app-container">
+    <nav class="sidebar">
+        <div class="brand">Tienda Admin</div>
         <ul class="nav-links">
-            <li><a th:href="@{/}">HOME</a></li>
-            <li><a th:href="@{/users}">USUARIOS</a></li>
-            <li><a th:href="@{/category}">CATEGORÍAS</a></li>
-            <li><a th:href="@{/product}">PRODUCTOS</a></li>
-            <li><a th:href="@{/order}" style="color: white; font-weight: bold;">PEDIDOS</a></li>
-            <li><a th:href="@{/orderdetail}">DETALLES PEDIDO</a></li>
+            <li><a th:href="@{/}">Inicio</a></li>
+            <li><a th:href="@{/users}">Usuarios</a></li>
+            <li><a th:href="@{/category}">Categorías</a></li>
+            <li><a th:href="@{/product}">Productos</a></li>
+            <li><a th:href="@{/order}" class="active">Pedidos</a></li>
+            <li><a th:href="@{/orderdetail}">Detalles</a></li>
         </ul>
         <div class="search-box">
-            <label>BUSCAR PEDIDO (ID)</label>
+            <label>Buscar Pedido (ID)</label>
             <form th:action="@{/order/search}" method="get">
-                <input type="number" name="id" placeholder="ID..." required>
-                <button type="submit" class="btn-search">BUSCAR</button>
+                <input type="number" name="id" placeholder="Ej. 50" required>
+                <button type="submit" class="btn-search">Buscar</button>
             </form>
         </div>
-    </div>
-    <div class="nav-footer">
-        <a th:href="@{/logout}" class="btn-logout">CERRAR SESIÓN</a>
-    </div>
-</nav>
-
-<main>
-    <div class="header-content">
-        <h1 th:text="${editMode} ? 'Editando Pedido' : 'Registro de Pedidos'"></h1>
-    </div>
-
-    <div th:replace="~{order-forms :: orderForm}"></div>
-
-    <div class="grid-juegos">
-        <div class="card" th:each="o : ${orders}">
-            <div class="card-info">
-                <span class="price-tag" th:text="'$' + ${o.orderTotal}"></span>
-                <div style="color: var(--steam-light-blue); font-size: 0.7rem;">PEDIDO REALIZADO</div>
-
-                <div style="font-weight: bold; font-size: 1.1rem; margin: 5px 0; color: white;"
-                     th:text="'Usuario ID: ' + ${o.user.userId}"></div>
-
-                <div style="font-size: 0.8rem; color: #8f98a0;" th:text="'Envío: ' + ${o.shippingAddress}"></div>
-                <div style="font-size: 0.7rem; color: var(--steam-light-blue); margin-top: 5px;" th:text="${o.orderDate}"></div>
-
-                <div style="font-size: 0.7rem; margin-top: 5px;">ID ORDEN: <span th:text="${o.orderId}"></span></div>
-
-                <div class="actions-links">
-                    <a th:href="@{/order/edit/{id}(id=${o.orderId})}" style="color: var(--steam-light-blue);">EDITAR</a>
-                    <a th:href="@{/order/delete/{id}(id=${o.orderId})}" style="color: #ff4c4c;">ELIMINAR</a>
+        <div class="nav-footer">
+            <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+        </div>
+    </nav>
+    <main class="content">
+        <div class="header-content">
+            <h1 th:text="${editMode} ? 'Editando Pedido' : 'Registro de Pedidos'"></h1>
+        </div>
+        <div th:replace="~{order-forms :: orderForm}"></div>
+        <div class="grid-cards">
+            <div class="card" th:each="o : ${orders}">
+                <div class="card-info">
+                    <div>
+                        <span class="price-tag" th:text="'$' + ${o.orderTotal}"></span>
+                        <div class="card-subtitle" th:text="${o.orderDate}"></div>
+                        <h3 class="card-title" th:text="'Pedido #' + ${o.orderId}"></h3>
+                    </div>
+                    <div class="card-desc">
+                        <strong style="color:var(--text-dark);">Usuario ID:</strong> <span th:text="${o.user.userId}"></span><br>
+                        <strong style="color:var(--text-dark);">Envío:</strong> <span th:text="${o.shippingAddress}"></span>
+                    </div>
+                    <div class="actions-links">
+                        <a th:href="@{/order/edit/{id}(id=${o.orderId})}" class="btn-action btn-edit">Editar</a>
+                        <a th:href="@{/order/delete/{id}(id=${o.orderId})}" class="btn-action btn-delete">Eliminar</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
+</div>
 </body>
 </html>

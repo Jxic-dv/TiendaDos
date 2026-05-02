@@ -11,9 +11,7 @@
                     <label>ID de la Orden</label>
                     <select th:field="*{order.orderId}" required>
                         <option value="" disabled selected>Seleccione Orden...</option>
-                        <option th:each="o : ${orders}"
-                                th:value="${o.orderId}"
-                                th:text="'Orden #' + ${o.orderId}"></option>
+                        <option th:each="o : ${orders}" th:value="${o.orderId}" th:text="'Orden #' + ${o.orderId}"></option>
                     </select>
                 </div>
 
@@ -21,9 +19,7 @@
                     <label>Producto</label>
                     <select th:field="*{product.productId}" required>
                         <option value="" disabled selected>Seleccione Producto...</option>
-                        <option th:each="p : ${products}"
-                                th:value="${p.productId}"
-                                th:text="${p.productName}"></option>
+                        <option th:each="p : ${products}" th:value="${p.productId}" th:text="${p.productName}"></option>
                     </select>
                 </div>
 
@@ -38,13 +34,12 @@
                 </div>
             </div>
 
-            <div style="margin-top: 20px;">
+            <div style="margin-top: 25px;">
                 <button type="submit" class="btn-save">
-                    [[${editMode} ? 'ACTUALIZAR DETALLE' : 'AGREGAR AL PEDIDO']]
+                    [[${editMode} ? 'Actualizar Detalle' : 'Agregar al Pedido']]
                 </button>
-                <a th:if="${editMode}" th:href="@{/orderdetail}"
-                   style="color: #66c0f4; margin-left: 15px; font-size: 0.8rem; text-decoration: none;">
-                    CANCELAR
+                <a th:if="${editMode}" th:href="@{/orderdetail}" class="btn-cancel">
+                    Cancelar
                 </a>
             </div>
         </form>
