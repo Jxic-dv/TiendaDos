@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Community - Categorías</title>
+    <style>
+        :root {
+            --steam-dark: #1b2838; --steam-blue: #2a475e; --steam-light-blue: #66c0f4;
+            --steam-bg: #171a21; --text-color: #c7d5e0; --steam-input: #121a24;
+            --steam-border: #233c51; --steam-success: #5c7e10; --steam-logout: #a34c32;
+        }
+        body { background-color: var(--steam-bg); color: var(--text-color); font-family: "Motiva Sans", sans-serif; margin: 0; display: flex; height: 100vh; }
+        nav { width: 240px; background-color: var(--steam-dark); padding: 20px; border-right: 1px solid #233c51; display: flex; flex-direction: column; justify-content: space-between; }
+        nav h2 { font-size: 1.2rem; color: white; text-transform: uppercase; margin-bottom: 20px; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+        .nav-links li { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-links a { color: var(--text-color); text-decoration: none; transition: color 0.3s; display: block; }
+        .nav-links a:hover { color: var(--steam-light-blue); }
+        .search-box { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--steam-border); }
+        .search-box label { font-size: 0.7rem; color: var(--steam-light-blue); display: block; margin-bottom: 5px; }
+        .search-box input { width: 100%; background: var(--steam-input); border: 1px solid var(--steam-border); color: white; padding: 5px; box-sizing: border-box; }
+        .btn-search { width: 100%; background: var(--steam-blue); color: white; border: none; padding: 5px; cursor: pointer; margin-top: 5px; }
+        .nav-footer { margin-top: auto; padding-top: 20px; }
+        .btn-logout { display: block; background-color: var(--steam-logout); color: white; text-align: center; padding: 10px; text-decoration: none; font-weight: bold; border-radius: 2px; }
+        main { flex-grow: 1; padding: 40px; overflow-y: auto; background: linear-gradient(to bottom, var(--steam-blue) 0%, var(--steam-bg) 40%); }
+        .form-container { background-color: rgba(0, 0, 0, 0.4); padding: 20px; border-radius: 4px; border: 1px solid var(--steam-border); margin-bottom: 40px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 0.7rem; color: var(--steam-light-blue); margin-bottom: 5px; text-transform: uppercase; }
+        .form-group input, .form-group textarea { background-color: var(--steam-input); border: 1px solid var(--steam-border); color: white; padding: 8px; outline: none; }
+        .btn-save { background-color: var(--steam-success); color: white; border: none; padding: 10px 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .grid-juegos { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .card { background-color: rgba(0, 0, 0, 0.3); border-radius: 4px; border-left: 4px solid var(--steam-light-blue); transition: transform 0.2s; }
+        .card-info { padding: 15px; background: #1b2838; }
+        .actions-links { margin-top: 10px; display: flex; gap: 15px; border-top: 1px solid #233c51; padding-top: 8px; }
+        .actions-links a { text-decoration: none; font-size: 0.75rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div>
+        <h2>Biblioteca</h2>
+        <ul class="nav-links">
+            <li><a th:href="@{/}">HOME</a></li>
+            <li><a th:href="@{/users}">USUARIOS</a></li>
+            <li><a th:href="@{/category}" style="color: white; font-weight: bold;">CATEGORÍAS</a></li>
+            <li><a th:href="@{/product}">PRODUCTOS</a></li>
+            <li><a th:href="@{/order}">PEDIDOS</a></li>
+            <li><a th:href="@{/orderdetail}">DETALLES PEDIDO</a></li>
+        </ul>
+        <div class="search-box">
+            <label>BUSCAR CATEGORÍA (ID)</label>
+            <form th:action="@{/category/search}" method="get">
+                <input type="number" name="id" placeholder="ID..." required>
+                <button type="submit" class="btn-search">BUSCAR</button>
+            </form>
+        </div>
+    </div>
+    <div class="nav-footer">
+        <a th:href="@{/logout}" class="btn-logout">CERRAR SESIÓN</a>
+    </div>
+</nav>
+
+<main>
+    <div class="header-content">
+        <h1 th:text="${editMode} ? 'Editando Categoría' : 'Gestión de Colecciones'"></h1>
+    </div>
+
+    <div class="form-container">
+        <form th:action="@{/category/save}" th:object="${category}" method="post">
+            <input type="hidden" th:field="*{categoryId}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nombre de Categoría</label>
+                    <input type="text" th:field="*{categoryName}" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea th:field="*{categoryDescription}" rows="1"></textarea>
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <button type="submit" class="btn-save">
+                    [[${editMode} ? 'Actualizar Colección' : 'Crear Nueva Colección']]
+                </button>
+                <a th:if="${editMode}" th:href="@{/category}" style="color:white; margin-left:15px; font-size:0.8rem;">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="grid-juegos">
+        <div class="card" th:each="c : ${categories}">
+            <div class="card-info">
+                <div style="color: var(--steam-light-blue); font-size: 0.7rem;">COLECCIÓN</div>
+                <div style="font-weight: bold; font-size: 1.1rem; margin: 5px 0;" th:text="${c.categoryName}"></div>
+                <div style="font-size: 0.8rem; color: #8f98a0; height: 40px; overflow: hidden;" th:text="${c.categoryDescription}"></div>
+                <div style="font-size: 0.7rem; margin-top: 5px;">ID: <span th:text="${c.categoryId}"></span></div>
+                <div class="actions-links">
+                    <a th:href="@{/category/edit/{id}(id=${c.categoryId})}" style="color: var(--steam-light-blue);">EDITAR</a>
+                    <a th:href="@{/category/delete/{id}(id=${c.categoryId})}" style="color: #ff4c4c;">ELIMINAR</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

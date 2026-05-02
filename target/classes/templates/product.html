@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Community - Productos</title>
+    <style>
+        :root {
+            --steam-dark: #1b2838; --steam-blue: #2a475e; --steam-light-blue: #66c0f4;
+            --steam-bg: #171a21; --text-color: #c7d5e0; --steam-input: #121a24;
+            --steam-border: #233c51; --steam-success: #5c7e10; --steam-logout: #a34c32;
+        }
+        body { background-color: var(--steam-bg); color: var(--text-color); font-family: "Motiva Sans", sans-serif; margin: 0; display: flex; height: 100vh; }
+        nav { width: 240px; background-color: var(--steam-dark); padding: 20px; border-right: 1px solid #233c51; display: flex; flex-direction: column; justify-content: space-between; }
+        nav h2 { font-size: 1.2rem; color: white; text-transform: uppercase; margin-bottom: 20px; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+        .nav-links li { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-links a { color: var(--text-color); text-decoration: none; transition: color 0.3s; display: block; }
+        .nav-links a:hover { color: var(--steam-light-blue); }
+
+        /* Estilos para la búsqueda */
+        .search-box { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--steam-border); }
+        .search-box label { font-size: 0.7rem; color: var(--steam-light-blue); display: block; margin-bottom: 5px; }
+        .search-box input { width: 100%; background: var(--steam-input); border: 1px solid var(--steam-border); color: white; padding: 5px; box-sizing: border-box; }
+        .btn-search { width: 100%; background: var(--steam-blue); color: white; border: none; padding: 5px; cursor: pointer; margin-top: 5px; font-size: 0.7rem; font-weight: bold; }
+
+        .nav-footer { margin-top: auto; padding-top: 20px; }
+        .btn-logout { display: block; background-color: var(--steam-logout); color: white; text-align: center; padding: 10px; text-decoration: none; font-weight: bold; border-radius: 2px; }
+
+        main { flex-grow: 1; padding: 40px; overflow-y: auto; background: linear-gradient(to bottom, var(--steam-blue) 0%, var(--steam-bg) 40%); }
+        .form-container { background-color: rgba(0, 0, 0, 0.4); padding: 20px; border-radius: 4px; border: 1px solid var(--steam-border); margin-bottom: 40px; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 0.7rem; color: var(--steam-light-blue); margin-bottom: 5px; text-transform: uppercase; }
+        .form-group input, .form-group select { background-color: var(--steam-input); border: 1px solid var(--steam-border); color: white; padding: 8px; outline: none; }
+
+        .btn-save { background-color: var(--steam-success); color: white; border: none; padding: 10px 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 20px; }
+
+        .grid-productos { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .product-card { background-color: rgba(0, 0, 0, 0.3); border-radius: 4px; border-bottom: 2px solid var(--steam-blue); overflow: hidden; transition: 0.3s; }
+        .product-card:hover { background-color: rgba(42, 71, 94, 0.4); }
+        .product-info { padding: 15px; }
+        .price-tag { background-color: #000; color: #BEEE11; padding: 2px 8px; font-weight: bold; float: right; border-radius: 2px; }
+        .stock-badge { font-size: 0.7rem; color: #8f98a0; }
+        .actions-links { margin-top: 15px; display: flex; gap: 15px; border-top: 1px solid #233c51; padding-top: 10px; }
+        .actions-links a { text-decoration: none; font-size: 0.75rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div>
+        <h2>Tienda Andres</h2>
+        <ul class="nav-links">
+            <li><a th:href="@{/}">HOME</a></li>
+            <li><a th:href="@{/users}">USUARIOS</a></li>
+            <li><a th:href="@{/category}">CATEGORÍAS</a></li>
+            <li><a th:href="@{/product}" style="color: white; font-weight: bold;">PRODUCTOS</a></li>
+            <li><a th:href="@{/order}">PEDIDOS</a></li>
+            <li><a th:href="@{/orderdetail}">DETALLES PEDIDO</a></li>
+        </ul>
+
+        <div class="search-box">
+            <label>BUSCAR PRODUCTO (ID)</label>
+            <form th:action="@{/product/search}" method="get">
+                <input type="number" name="id" placeholder="ID..." required>
+                <button type="submit" class="btn-search">BUSCAR</button>
+            </form>
+        </div>
+    </div>
+    <div class="nav-footer">
+        <a th:href="@{/logout}" class="btn-logout">CERRAR SESIÓN</a>
+    </div>
+</nav>
+
+<main>
+    <div class="header-content">
+        <h1 th:text="${editMode} ? 'Modificar Producto' : 'Catálogo de Productos'"></h1>
+    </div>
+
+    <div th:replace="~{product-forms :: form-producto}"></div>
+
+    <div class="grid-productos">
+        <div class="product-card" th:each="p : ${products}">
+            <div class="product-info">
+                <span class="price-tag" th:text="'$' + ${p.productPrice}"></span>
+                <div style="color: var(--steam-light-blue); font-size: 0.7rem; text-transform: uppercase;"
+                     th:text="${p.category.categoryName}"></div>
+
+                <div style="font-weight: bold; font-size: 1.2rem; margin: 5px 0; color: white;"
+                     th:text="${p.productName}"></div>
+
+                <div style="font-size: 0.85rem; color: #c7d5e0;" th:text="'Marca: ' + ${p.brand}"></div>
+
+                <div class="stock-badge" style="margin-top: 10px;">
+                    En existencia: <span th:text="${p.stock}"
+                                         th:style="${p.stock < 5} ? 'color: #ff4c4c; font-weight: bold;' : 'color: #5c7e10;'"></span>
+                </div>
+
+                <div class="actions-links">
+                    <a th:href="@{/product/edit/{id}(id=${p.productId})}" style="color: var(--steam-light-blue);">EDITAR</a>
+                    <a th:href="@{/product/delete/{id}(id=${p.productId})}" style="color: #ff4c4c;">ELIMINAR</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

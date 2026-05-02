@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="categoryForm">
+    <form th:action="@{/categories/save}" th:object="${category}" method="post">
+        <!-- ID oculto para saber si editamos o creamos -->
+        <input type="hidden" th:field="*{categoryId}">
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nombre de la Categoría</label>
+                <!-- CORRECCIÓN: categoryName -->
+                <input type="text" th:field="*{categoryName}"
+                       placeholder="Ej. Acción, RPG..." required>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción</label>
+                <!-- CORRECCIÓN: categoryDescription -->
+                <textarea th:field="*{categoryDescription}"
+                          placeholder="Descripción breve..." rows="1"></textarea>
+            </div>
+
+            <!-- Mantener el estado activo oculto -->
+            <input type="hidden" th:field="*{isActive}">
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button type="submit" class="btn-save">
+                [[${editMode} ? 'GUARDAR CAMBIOS' : 'CREAR CATEGORÍA']]
+            </button>
+            <a th:if="${editMode}" th:href="@{/categories}"
+               style="color: #66c0f4; margin-left: 15px; font-size: 0.8rem; text-decoration: none;">
+                CANCELAR
+            </a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

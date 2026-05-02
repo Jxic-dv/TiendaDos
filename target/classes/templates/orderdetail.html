@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Community - Detalles de Pedido</title>
+    <style>
+        :root {
+            --steam-dark: #1b2838; --steam-blue: #2a475e; --steam-light-blue: #66c0f4;
+            --steam-bg: #171a21; --text-color: #c7d5e0; --steam-input: #121a24;
+            --steam-border: #233c51; --steam-success: #5c7e10; --steam-logout: #a34c32;
+        }
+        body { background-color: var(--steam-bg); color: var(--text-color); font-family: "Motiva Sans", sans-serif; margin: 0; display: flex; height: 100vh; }
+        nav { width: 240px; background-color: var(--steam-dark); padding: 20px; border-right: 1px solid #233c51; display: flex; flex-direction: column; justify-content: space-between; }
+        nav h2 { font-size: 1.2rem; color: white; text-transform: uppercase; margin-bottom: 20px; }
+        .nav-links { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+        .nav-links li { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .nav-links a { color: var(--text-color); text-decoration: none; transition: color 0.3s; display: block; }
+        .nav-links a:hover { color: var(--steam-light-blue); }
+        .nav-footer { margin-top: auto; padding-top: 20px; }
+        .btn-logout { display: block; background-color: var(--steam-logout); color: white; text-align: center; padding: 10px; text-decoration: none; font-weight: bold; border-radius: 2px; }
+        main { flex-grow: 1; padding: 40px; overflow-y: auto; background: linear-gradient(to bottom, var(--steam-blue) 0%, var(--steam-bg) 40%); }
+        .form-container { background-color: rgba(0, 0, 0, 0.4); padding: 20px; border-radius: 4px; border: 1px solid var(--steam-border); margin-bottom: 40px; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 0.7rem; color: var(--steam-light-blue); margin-bottom: 5px; text-transform: uppercase; }
+        .form-group input, .form-group select { background-color: var(--steam-input); border: 1px solid var(--steam-border); color: white; padding: 8px; outline: none; }
+        .btn-save { background-color: var(--steam-success); color: white; border: none; padding: 10px 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+
+        /* Tabla de Detalles */
+        .steam-table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.2); }
+        .steam-table th { text-align: left; background: rgba(0,0,0,0.4); color: var(--steam-light-blue); font-size: 0.8rem; padding: 12px; border-bottom: 2px solid var(--steam-border); }
+        .steam-table td { padding: 12px; border-bottom: 1px solid var(--steam-border); font-size: 0.9rem; }
+        .subtotal-text { color: #BEEE11; font-weight: bold; }
+        .actions-cell a { text-decoration: none; font-size: 0.75rem; font-weight: bold; margin-right: 10px; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div>
+        <h2>Tienda Andres</h2>
+        <ul class="nav-links">
+            <li><a th:href="@{/}">HOME</a></li>
+            <li><a th:href="@{/users}">USUARIOS</a></li>
+            <li><a th:href="@{/category}">CATEGORÍAS</a></li>
+            <li><a th:href="@{/product}">PRODUCTOS</a></li>
+            <li><a th:href="@{/order}">PEDIDOS</a></li>
+            <li><a th:href="@{/orderdetail}" style="color: white; font-weight: bold;">DETALLES</a></li>
+        </ul>
+    </div>
+    <div class="nav-footer">
+        <a th:href="@{/logout}" class="btn-logout">CERRAR SESIÓN</a>
+    </div>
+</nav>
+
+<main>
+    <div class="header-content">
+        <h1 th:text="${editMode} ? 'Editando Detalle' : 'Desglose de Productos'"></h1>
+    </div>
+
+    <div th:replace="~{orderdetail-forms :: detailForm}"></div>
+
+    <div class="form-container">
+        <table class="steam-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>ORDEN ID</th>
+                <th>PRODUCTO</th>
+                <th>CANTIDAD</th>
+                <th>P. UNITARIO</th>
+                <th>SUBTOTAL</th>
+                <th>ACCIONES</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="d : ${orderDetails}">
+                <td th:text="${d.detailId}"></td>
+                <td th:text="${d.order.orderId}"></td>
+                <td th:text="${d.product.productName}"></td>
+                <td th:text="${d.quantity}"></td>
+                <td th:text="'$' + ${d.unitPrice}"></td>
+                <td class="subtotal-text" th:text="'$' + ${d.subtotal}"></td>
+                <td class="actions-cell">
+                    <a th:href="@{/orderdetail/edit/{id}(id=${d.detailId})}" style="color: var(--steam-light-blue);">EDITAR</a>
+                    <a th:href="@{/orderdetail/delete/{id}(id=${d.detailId})}" style="color: #ff4c4c;">ELIMINAR</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>
