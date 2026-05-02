@@ -1,0 +1,122 @@
+DROP DATABASE IF EXISTS storeDb_in5bv;
+CREATE DATABASE storeDb_in5bv;
+USE storeDb_in5bv;
+
+-- 1. Tables Creation
+CREATE TABLE users (
+    userId INT AUTO_INCREMENT PRIMARY KEY,
+    firstName VARCHAR(60) NOT NULL,
+    lastName VARCHAR(60) NOT NULL,
+    age INT NOT NULL,
+    email VARCHAR(100) NOT NULL -- Nuevo Atributo
+);
+
+CREATE TABLE categories (
+    categoryId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    categoryName VARCHAR(60) NOT NULL,
+    categoryDescription VARCHAR(150),
+    isActive BOOLEAN DEFAULT TRUE -- Nuevo Atributo
+);
+
+CREATE TABLE products (
+    productId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    productName VARCHAR(80) NOT NULL,
+    productPrice DECIMAL(10,2) NOT NULL,
+    stock INT NOT NULL,
+    brand VARCHAR(50), -- Nuevo Atributo
+    category_id INT NOT NULL,
+    CONSTRAINT fk_product_category
+        FOREIGN KEY (category_id)
+        REFERENCES categories(categoryId)
+);
+
+CREATE TABLE orders (
+    orderId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    orderDate VARCHAR(60) NOT NULL,
+    orderTotal DECIMAL(10,2) NOT NULL,
+    shippingAddress VARCHAR(150), -- Nuevo Atributo
+    user_id INT NOT NULL,
+    CONSTRAINT fk_order_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(userId)
+);
+
+CREATE TABLE details (
+    detailId INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    quantity INT NOT NULL,
+    unitPrice DECIMAL(10,2) NOT NULL,
+    subtotal DECIMAL(10,2) NOT NULL, -- Nuevo Atributo
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    CONSTRAINT fk_detail_order
+        FOREIGN KEY (order_id)
+        REFERENCES orders(orderId),
+    CONSTRAINT fk_detail_product
+        FOREIGN KEY (product_id)
+        REFERENCES products(productId)
+);
+
+-- 2. Insert users
+INSERT INTO users (firstName, lastName, age, email) VALUES
+('Juan', 'Perez', 25, 'juan.perez@mail.com'),
+('Maria', 'Lopez', 30, 'maria.lopez@mail.com'),
+('Carlos', 'Garcia', 22, 'carlos.g@mail.com'),
+('Ana', 'Martinez', 28, 'ana.mtz@mail.com'),
+('Luis', 'Rodriguez', 35, 'luis.rod@mail.com'),
+('Elena', 'Hernandez', 24, 'elena.h@mail.com'),
+('Pedro', 'Sanchez', 40, 'pedro.s@mail.com'),
+('Sofia', 'Ramirez', 29, 'sofia.r@mail.com'),
+('Diego', 'Torres', 31, 'diego.t@mail.com'),
+('Lucia', 'Flores', 27, 'lucia.f@mail.com');
+
+-- 3. Insert categories
+INSERT INTO categories (categoryName, categoryDescription, isActive) VALUES
+('Electronica', 'Dispositivos y gadgets', 1),
+('Ropa', 'Prendas de vestir', 1),
+('Hogar', 'Articulos para casa', 1),
+('Juguetes', 'Diversion', 1),
+('Libros', 'Lectura variada', 1),
+('Deportes', 'Equipamiento', 1),
+('Belleza', 'Cuidado personal', 1),
+('Automotriz', 'Accesorios', 0),
+('Musica', 'Instrumentos', 1),
+('Comida', 'Alimentos preparados', 1);
+
+-- 4. Insert products
+INSERT INTO products (productName, productPrice, stock, brand, category_id) VALUES
+('Laptop', 800.00, 10, 'Dell', 1),
+('Camisa', 20.00, 50, 'Zara', 2),
+('Silla', 45.00, 20, 'Ikea', 3),
+('Pelota', 15.00, 100, 'Adidas', 4),
+('Novela', 10.00, 30, 'Penguin', 5),
+('Pesas', 50.00, 15, 'Nike', 6),
+('Shampoo', 5.00, 200, 'Pantene', 7),
+('Aceite', 12.00, 40, 'Mobil', 8),
+('Guitarra', 150.00, 5, 'Fender', 9),
+('Pizza', 10.00, 20, 'Dominoes', 10);
+
+-- 5. Insert orders
+INSERT INTO orders (orderDate, orderTotal, shippingAddress, user_id) VALUES
+('2026-04-10', 800.00, 'Calle 1, Zona 1', 1),
+('2026-04-11', 20.00, 'Ave. Central 45', 2),
+('2026-04-11', 45.00, 'Condominio Las Flores', 3),
+('2026-04-12', 15.00, 'Km 15 Carretera Sur', 4),
+('2026-04-12', 10.00, 'Residencial El Roble', 5),
+('2026-04-13', 50.00, 'Apartamentos 4-B', 6),
+('2026-04-14', 5.00, 'Barrio San Jose', 7),
+('2026-04-15', 12.00, 'Sector 5, Lote 12', 8),
+('2026-04-15', 150.00, 'Calle Real 9-10', 9),
+('2026-04-16', 10.00, 'Avenida Las Americas', 10);
+
+-- 6. Insert order details
+INSERT INTO details (quantity, unitPrice, subtotal, order_id, product_id) VALUES
+(1, 800.00, 800.00, 1, 1),
+(1, 20.00, 20.00, 2, 2),
+(1, 45.00, 45.00, 3, 3),
+(1, 15.00, 15.00, 4, 4),
+(1, 10.00, 10.00, 5, 5),
+(1, 50.00, 50.00, 6, 6),
+(1, 5.00, 5.00, 7, 7),
+(1, 12.00, 12.00, 8, 8),
+(1, 150.00, 150.00, 9, 9),
+(1, 10.00, 10.00, 10, 10);
